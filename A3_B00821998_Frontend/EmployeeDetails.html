@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Employee Information</title>
+  <?php 'Access-Control-Allow-Origin: *'?>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+   
+  $("#viewEmployee").hide();
+  $("#deleteEmployee").hide();
+
+  $('#addEmployeeButton').click(function(){
+      var requestData1 = $("#fname").val();
+      var requestData2 = $("#lname").val();
+      var requestData3 = $("#email").val();
+      
+      $.ajax({
+        url:'http://localhost:1337/employee/create',
+        method: 'GET',
+        data: {firstName: requestData1,lastName:requestData2,email:requestData3},
+        dataType: 'json',
+        success: function(response){
+          alert('Employee added successfully...');
+        },
+        error: function(err){
+          alert('Please check your input...');
+        }
+      });
+  });
+
+  $("#viewEmployeeButton").click(function(){
+      var requestData = $("#email2").val();
+      var result = $('#resultElement');
+
+      $.ajax({
+        url:'http://localhost:1337/employee/find',
+        method: 'GET',
+        data: {email:requestData},
+        dataType: 'json',
+        success: function(response){
+          if(null!=response && response.length>0){
+          result.html('<div class="container"><br><table class="table table-bordered table-sm"><thead class="thead-light"><tr><th>Employee Id</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Address</th><th>Postal Code</th></tr></thead><tbody><tr><td>'+
+            response[0].id+'</td><td>'+response[0].firstName+'</td><td>'+response[0].lastName+'</td><td>'+response[0].email+'<td>'+response[0].employeedetails[0].city+'</td><td>'+response[0].employeedetails[0].postalcode+'</td></td></tr></tbody></table></div>');
+          }
+          else{
+            result.html('<br><div class="container"><div class="alert alert-danger col-md-4 col-md-offset-4"><strong>'+'Please enter valid employee...'+'</strong></div></div>');
+          }
+        },
+        error: function(err){
+          result.html('<br><div class="container"><div class="alert alert-danger col-md-4 col-md-offset-4"><strong>'+'Please enter valid employee...'+'</strong></div></div>');
+        }
+      });
+  });
+  
+
+  $("#deleteEmployeeButton").click(function(){
+      var requestData = $("#employeeId").val();
+      var result = $("#resultElement");
+
+      $.ajax({
+        url:'http://localhost:1337/employee/'+requestData,
+        method: 'delete',
+        success: function(response){
+          result.html('<br><div class="container"><div class="alert alert-success col-md-4 col-md-offset-4"><strong>'+'Employee deleted successfully...'+'</strong></div></div>');
+        },
+        error: function(err){
+          result.html('<br><div class="container"><div class="alert alert-danger col-md-4 col-md-offset-4"><strong>'+'Employee could not be deleted...'+'</strong></div></div>');
+        }
+      });
+  });
+
+  $(".btn1").click(function(){
+    $("#viewEmployee").hide();
+    $("#deleteEmployee").hide();
+    $("#addEmployee").show();
+  });
+  $(".btn2").click(function(){
+    $("#addEmployee").hide();
+    $("#deleteEmployee").hide();
+    $("#viewEmployee").show();
+  });
+
+  $(".btn3").click(function(){
+    $("#addEmployee").hide();
+    $("#viewEmployee").hide();
+    $("#deleteEmployee").show();
+  });
+   
+});
+</script>
+<style type="text/css">
+  
+.alignbutton{
+  margin-left: 180px;
+  width: 150px;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 16px;
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" href="#!">Employee Dashboard</a>
+</nav>
+<div class="container">
+<br>
+<div class="form-check-inline">
+  <label class="form-check-label">
+    <input type="radio" class="form-check-input btn1" checked name="optradio">Add Employee
+  </label>
+</div>
+<div class="form-check-inline">
+  <label class="form-check-label">
+    <input type="radio" class="form-check-input btn2" name="optradio">View Employee
+  </label>
+</div>
+<div class="form-check-inline disabled">
+  <label class="form-check-label">
+    <input type="radio" class="form-check-input btn3" name="optradio">Delete Employee
+  </label>
+</div>
+  <form id="addEmployee">
+     <br>
+    <div class="form-group">
+      <label for="fname" visibility="hidden">First Name:</label>
+      <input type="text" class="form-control w-50" id="fname" placeholder="Enter first name" name="fname" required >
+    </div>
+    <div class="form-group">
+      <label for="lname">Last Name:</label>
+      <input type="text" class="form-control w-50" id="lname" placeholder="Enter last name" name="lname" required>
+    </div>    
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control w-50" id="email" placeholder="Enter email" name="email"required>
+    </div>
+    <div class="form-group">
+      <label for="city">City:</label>
+      <input type="text" class="form-control w-50" id="city" placeholder="Enter city" name="city">
+    </div>
+    <div class="form-group">
+      <label for="postalcode">Postal Code:</label>
+      <input type="text" class="form-control w-50" id="postalcode" placeholder="Enter postal code" name="postalcode"required>
+    </div>
+    <div id="result"></div>
+    <input type="button" id="addEmployeeButton" class="button" value="Add">
+  </form>
+
+  <form id="viewEmployee">
+     <br>  
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control w-50" id="email2" required placeholder="Enter email" name="email">   
+    </div>
+    <input type="button" id="viewEmployeeButton" class="button" value="View"/>
+  </form>
+
+  <form id="deleteEmployee">
+     <br>      
+    <div class="form-group">
+      <label for="emId">Employee Id:</label>
+      <input type="text" class="form-control w-50" id="employeeId" required placeholder="Enter employee id" name="emId">
+    </div>
+    <input type="button" id="deleteEmployeeButton" class="button" value="Delete"/>
+  </form>
+</div>
+<div id="resultElement"></div>
+<nav class="navbar fixed-bottom navbar-light bg-light">
+  <a class="navbar-brand" href="#!">© Assignment 3</a>
+</nav>
+</body>
+</html>
